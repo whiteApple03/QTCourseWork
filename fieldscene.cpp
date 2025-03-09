@@ -1,6 +1,7 @@
 #include <QList>
 #include <QPointF>
 
+
 #include "fieldscene.h"
 #include "pencil.h"
 
@@ -19,88 +20,88 @@ FieldScene::FieldScene(int fieldSizeX, int fieldSizeY, ToolConfiguration* config
     setupScene();
 }
 
-void FieldScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    drawPixel(event->scenePos().toPoint());
+
+
+void FieldScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+    int x = (int)(event->scenePos().x() / m_pixelSize) * m_pixelSize;
+    int y = (int)(event->scenePos().y() / m_pixelSize) * m_pixelSize;
+
+    paintSelectedArea(x, y, event);
 }
 
-// void FieldScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+void FieldScene::paintSelectedArea(int x, int y, QGraphicsSceneMouseEvent* event) {
+    if ((lastMouseCoord->x() != x || lastMouseCoord->y() != y) && checkBorders(event->scenePos())) {
+        delete selectionArea;
+        selectionArea = nullptr;
+        lastMouseCoord->setX(x);
+        lastMouseCoord->setY(y);
 
-//     int x = (int)(event->scenePos().x() / m_pixelSize) * m_pixelSize;
-//     int y = (int)(event->scenePos().y() / m_pixelSize) * m_pixelSize;
-//     qDebug() << x << ' ' << y;
-//     QPointF topLeft(x - (m_config->selectedRectSize/2 * m_pixelSize)+1, y - (m_config->selectedRectSize/2 * m_pixelSize)+1);
-//     QPointF bottomRight(x + (m_config->selectedRectSize/2 * m_pixelSize)-1, y + (m_config->selectedRectSize/2 * m_pixelSize)-1);
+        int topLeftX = (x - (m_config->selectedRectSize/2 * m_pixelSize));
 
-//     const QRectF rect(topLeft, bottomRight);
-//     qDebug() << topLeft.x() << ' ' << topLeft.y();
-//     qDebug() << bottomRight.x() << ' ' << bottomRight.y();
+        int topLeftY = y - (m_config->selectedRectSize/2 * m_pixelSize);
 
-//     QList<QGraphicsItem*> items = this->items(rect, Qt::IntersectsItemShape, Qt::AscendingOrder, QTransform());
-//     if (!items.isEmpty()) {
-//         qDebug() << "start";
-//         for (auto item : items) {
-//             if (PixelItem* rectItem = dynamic_cast<PixelItem*>(item)) {
-//                 qDebug() << rectItem->rect().x() / m_pixelSize << rectItem->rect().y() / m_pixelSize;
-//                 rectItem->setColor(rectItem->color(), 64);
-//             }
-//         }
-//         qDebug() << "end";
-//     }
-// }
+        int offsetX = getOffsetXAndValidateTopLeftX(topLeftX);
+        int offsetY = getOffsetYAndValidateTopLeftY(topLeftY);
 
+        int selectedAreaWidth = m_config->selectedRectSize*m_pixelSize + offsetX;
+        int selectedAreaHeight = m_config->selectedRectSize * m_pixelSize + offsetY;
+        addSelectedArea(topLeftX, topLeftY, selectedAreaWidth, selectedAreaHeight);
+    }
+}
 bool FieldScene::checkBorders(const QPointF &point) {
     return point.x() >= 0 && point.y() >= 0 && point.x() < m_config->fieldSizeX * m_pixelSize && point.y() < m_config->fieldSizeY*m_pixelSize;
 }
 
-void FieldScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
-
-
-
-    int x = (int)(event->scenePos().x() / m_pixelSize) * m_pixelSize;
-    int y = (int)(event->scenePos().y() / m_pixelSize) * m_pixelSize;
-
-
-
-    if ((lastMouseCoord->x() != x || lastMouseCoord->y() != y) && checkBorders(event->scenePos())) {
-        delete selectionArea;
-
-        qDebug() << x << " = " << lastMouseCoord->x() << y << " = " << lastMouseCoord->y();
-
-        lastMouseCoord->setX(x);
-        lastMouseCoord->setY(y);
-        QPointF topLeft(x - (m_config->selectedRectSize/2 * m_pixelSize), y - (m_config->selectedRectSize/2 * m_pixelSize));
-        QPointF bottomRight(x + (m_config->selectedRectSize/2 * m_pixelSize), y + (m_config->selectedRectSize/2 * m_pixelSize));
-
-        const QRectF rect(topLeft, bottomRight);
-        qDebug() << topLeft.x() << ' ' << topLeft.y();
-        qDebug() << bottomRight.x() << ' ' << bottomRight.y();
-        selectionArea = new QGraphicsRectItem(topLeft.x(), topLeft.y(), m_config->selectedRectSize*m_pixelSize, m_config->selectedRectSize * m_pixelSize);
-        selectionArea->setPen(Qt::NoPen);
-        QColor semiBlack(0, 0, 0, 128);
-        selectionArea->setBrush(semiBlack);
-        addItem(selectionArea);
-
-        QList<QGraphicsItem*> items = this->items(rect, Qt::IntersectsItemShape, Qt::AscendingOrder, QTransform());
-        if (!items.isEmpty()) {
-            qDebug() << "start";
-            for (auto item : items) {
-                if (PixelItem* rectItem = dynamic_cast<PixelItem*>(item)) {
-                    qDebug() << rectItem->rect().x() / m_pixelSize << rectItem->rect().y() / m_pixelSize;
-                    // rectItem->setColor(rectItem->color(), 64);
-                }
-            }
-            qDebug() << "end";
-        }
+int FieldScene::getOffsetXAndValidateTopLeftX(int& topLeftX) {
+    int offsetX = 0;
+    if (topLeftX < 0) {
+        offsetX = topLeftX;
+        topLeftX = 0;
     }
-
-
+    if (topLeftX + m_config->selectedRectSize*m_pixelSize > m_config->fieldSizeX * m_pixelSize) {
+        offsetX = m_config->fieldSizeX * m_pixelSize - m_config->selectedRectSize*m_pixelSize - topLeftX;
+    }
+    return offsetX;
 }
 
-void FieldScene::drawPixel(const QPoint &scenePos) {
-
-    if (PixelItem* rectItem = dynamic_cast<PixelItem*>(itemAt(scenePos, QTransform()))) {
-        rectItem->setColor(Qt::black);
+int FieldScene::getOffsetYAndValidateTopLeftY(int &topLeftY) {
+    int offsetY = 0;
+    if (topLeftY < 0) {
+        offsetY = topLeftY;
+        topLeftY = 0;
     }
+    if (topLeftY + m_config->selectedRectSize*m_pixelSize > m_config->fieldSizeY * m_pixelSize) {
+        offsetY = m_config->fieldSizeY * m_pixelSize - m_config->selectedRectSize*m_pixelSize - topLeftY;
+    }
+    return offsetY;
+}
+
+void FieldScene::addSelectedArea(int topLeftX, int topLeftY, int selectedAreaWidth, int selectedAreaHeight ) {
+    selectionArea = new QGraphicsRectItem(topLeftX, topLeftY, selectedAreaWidth, selectedAreaHeight);
+    selectionArea->setPen(Qt::NoPen);
+    QColor semiBlack(0, 0, 0, 128);
+    selectionArea->setBrush(semiBlack);
+    addItem(selectionArea);
+}
+
+void FieldScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    drawPixel(event->scenePos());
+}
+
+void FieldScene::drawPixel(const QPointF &scenePos) {
+    qDebug() << "press " << scenePos.x() <<  ' ' <<  scenePos.y();
+
+    // if (PixelItem* rectItem = dynamic_cast<PixelItem*>(itemAt(scenePos.toPoint(), QTransform()))) {
+    //     rectItem->setColor(Qt::black);
+    // } else if (QGraphicsRectItem* area = dynamic_cast<QGraphicsRectItem*>(itemAt(scenePos, QTransform()))) {
+    if (selectionArea != nullptr) {
+        QList<QGraphicsItem *> items = items(selectionArea->rect(), Qt::IntersectsItemShape, Qt::AscendingOrder,  QTransform());
+        for(auto item : items) {
+            PixelItem* rectItem = dynamic_cast<PixelItem*>(item);
+            rectItem->setColor(Qt::black);
+        }
+    }
+    // }
 }
 void FieldScene::OnPixelSizeChanged(int newSize) {
     setSceneRect(0, 0, m_fieldSizeX * newSize, m_fieldSizeY * newSize);

@@ -31,9 +31,13 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
 
 private:
-    void drawPixel(const QPoint &scenePos);
+    void drawPixel(const QPointF &scenePos);
     void setupScene();
     bool checkBorders(const QPointF& point);
+    int getOffsetXAndValidateTopLeftX(int &offsetX);
+    int getOffsetYAndValidateTopLeftY(int &offsetY);
+    void addSelectedArea(int topLeftX, int topLeftY, int selectedAreaWidth, int selectedAreaHeight);
+    void paintSelectedArea(int, int, QGraphicsSceneMouseEvent*);
 
     ToolForFieldInteractive *m_tool;
     ToolForFieldInteractive* tool;
