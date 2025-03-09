@@ -1,0 +1,41 @@
+#ifndef FIELDVIEW_H
+#define FIELDVIEW_H
+#include <QGraphicsView>
+#include <QResizeEvent>
+#include <QDebug>
+
+#include "fieldscene.h"
+
+class FieldView : public QGraphicsView {
+    Q_OBJECT
+
+public:
+    FieldView(QWidget *parent = nullptr) : QGraphicsView(parent) {}
+
+signals:
+    void pixelSizeChanged(int newSize);
+
+protected:
+    void resizeEvent(QResizeEvent *event) override {
+        QGraphicsView::resizeEvent(event);
+        recalculatePixelSize();
+    }
+
+private:
+
+    void recalculatePixelSize() {
+        FieldScene* m_scene = dynamic_cast<FieldScene*>(this->scene());
+        if (!m_scene) return;
+
+        QSize viewportSize = viewport()->size();
+        if (viewportSize.width() <= 0 || viewportSize.height() <= 0) return;
+
+        int newPixelSize = qMin(viewportSize.width() / m_scene->m_fieldSizeX, viewportSize.height() / m_scene->m_fieldSizeY);
+
+        if (newPixelSize != m_scene->m_pixelSize) {
+            emit pixelSizeChanged(newPixelSize);
+        }
+    }
+};
+#endif // FIELDVIEW_H
+
