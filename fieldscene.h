@@ -7,13 +7,14 @@
 #include <QGraphicsSceneMouseEvent>
 
 #include "toolforfieldinteractive.h"
+#include "toolconfiguration.h"
 #include "pixelitem.h"
 
 class FieldScene : public QGraphicsScene {
     Q_OBJECT
 
 public:
-    FieldScene(int fieldSizeX, int fieldSizeY, QObject *parent = nullptr);
+    FieldScene(int fieldSizeX, int fieldSizeY, ToolConfiguration* config,  QObject *parent = nullptr);
     ~FieldScene() override;
 
     // int pixelSize() const;
@@ -27,14 +28,20 @@ public slots:
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-    // void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
 
 private:
+    void drawPixel(const QPoint &scenePos);
+    void setupScene();
+    bool checkBorders(const QPointF& point);
 
     ToolForFieldInteractive *m_tool;
-    void setupScene();
+    ToolForFieldInteractive* tool;
+    ToolConfiguration* m_config;
 
-    void drawPixel(const QPoint &scenePos);
+    QRectF* selectedRect;
+    QPointF* lastMouseCoord;
+    QGraphicsRectItem* selectionArea = nullptr;
 };
 
 #endif // FIELDSCENE_H

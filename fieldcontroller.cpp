@@ -4,7 +4,8 @@ FieldController::FieldController(FieldView* fieldView, int fieldSizeX, int field
     fieldSizeX(fieldSizeX),
     fieldSizeY(fieldSizeY)
 {
-    scene = new FieldScene(fieldSizeX, fieldSizeY, fieldView);
+    config = new ToolConfiguration();
+    scene = new FieldScene(fieldSizeX, fieldSizeY, config, fieldView);
     fieldView->setScene(scene);
     fieldView->setMouseTracking(true); // Важно для получения событий перемещения мыши
 }

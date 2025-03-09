@@ -7,6 +7,9 @@ public:
     ToolConfiguration();
     int fieldSizeX;
     int fieldSizeY;
+    int pixelSize;
+    int selectedRectSize;
+
 };
 
 #endif // TOOLCONFIGURATION_H

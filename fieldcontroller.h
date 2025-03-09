@@ -10,6 +10,7 @@
 #include "pencil.h"
 #include "fieldscene.h"
 #include "fieldview.h"
+#include "toolconfiguration.h"
 
 class FieldController
 {
@@ -28,7 +29,8 @@ private:
     int fieldSizeX;
     int fieldSizeY;
     int pixelSize;
-    ToolForFieldInteractive* tool;
+    ToolConfiguration* config;
+
 
 };
 
