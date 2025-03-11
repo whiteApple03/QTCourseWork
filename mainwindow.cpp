@@ -33,7 +33,7 @@ void MainWindow::on_pushButton_2_clicked()
 {
     QColor color = QColorDialog::getColor(currentColor, this, "Select Color");
     if (color.isValid()) {
-        currentColor = color;
+        config->currentColor = color;
     }
 }
 

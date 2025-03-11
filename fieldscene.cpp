@@ -22,7 +22,14 @@ FieldScene::FieldScene(ToolConfiguration* config, QObject *parent)
 void FieldScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
     int x = (int)(event->scenePos().x() / m_config->pixelSize) * m_config->pixelSize;
     int y = (int)(event->scenePos().y() / m_config->pixelSize) * m_config->pixelSize;
+    if (event->buttons() & Qt::LeftButton) {
+        qDebug() << event->scenePos().x();
+        drawPixel(event->scenePos());
+    }
     paintSelectedArea(x, y, event);
+
+
+
 }
 
 void FieldScene::paintSelectedArea(int x, int y, QGraphicsSceneMouseEvent* event) {
@@ -91,16 +98,12 @@ void FieldScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void FieldScene::drawPixel(const QPointF &scenePos) {
-
-    // if (PixelItem* rectItem = dynamic_cast<PixelItem*>(itemAt(scenePos.toPoint(), QTransform()))) {
-    //     rectItem->setColor(Qt::black);
-    // } else if (QGraphicsRectItem* area = dynamic_cast<QGraphicsRectItem*>(itemAt(scenePos, QTransform()))) {
     if (selectionArea != nullptr) {
         QList<QGraphicsItem *> items = this->items(selectionArea->rect(), Qt::IntersectsItemShape, Qt::AscendingOrder,  QTransform());
         for(auto item : items) {
 
             if (PixelItem* rectItem = dynamic_cast<PixelItem*>(item)) {
-                rectItem->setColor(Qt::black);
+                rectItem->setColor(m_config->currentColor);
             }
 
         }

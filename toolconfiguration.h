@@ -11,7 +11,7 @@ public:
     int fieldSizeY;
     int pixelSize;
     int selectedRectSize;
-    QColor* currentColor;
+    QColor currentColor;
 
 };
 

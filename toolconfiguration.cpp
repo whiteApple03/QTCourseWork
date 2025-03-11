@@ -5,5 +5,5 @@ ToolConfiguration::ToolConfiguration() {
     fieldSizeY = 32;
     selectedRectSize = 2;
     pixelSize = 1;
-    currentColor = new QColor(Qt::black);
+    currentColor = QColor(Qt::black);
 }
