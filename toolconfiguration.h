@@ -1,6 +1,8 @@
 #ifndef TOOLCONFIGURATION_H
 #define TOOLCONFIGURATION_H
 
+#include<QColor>
+
 class ToolConfiguration
 {
 public:
@@ -9,6 +11,7 @@ public:
     int fieldSizeY;
     int pixelSize;
     int selectedRectSize;
+    QColor* currentColor;
 
 };
 

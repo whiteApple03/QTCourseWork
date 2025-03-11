@@ -30,9 +30,9 @@ private:
         QSize viewportSize = viewport()->size();
         if (viewportSize.width() <= 0 || viewportSize.height() <= 0) return;
 
-        int newPixelSize = qMin(viewportSize.width() / m_scene->m_fieldSizeX, viewportSize.height() / m_scene->m_fieldSizeY);
+        int newPixelSize = qMin(viewportSize.width() / m_scene->m_config->fieldSizeX, viewportSize.height() / m_scene->m_config->fieldSizeY);
 
-        if (newPixelSize != m_scene->m_pixelSize) {
+        if (newPixelSize != m_scene->m_config->pixelSize) {
             emit pixelSizeChanged(newPixelSize);
         }
     }

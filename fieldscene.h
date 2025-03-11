@@ -14,15 +14,11 @@ class FieldScene : public QGraphicsScene {
     Q_OBJECT
 
 public:
-    FieldScene(int fieldSizeX, int fieldSizeY, ToolConfiguration* config,  QObject *parent = nullptr);
+    FieldScene(ToolConfiguration* config,  QObject *parent = nullptr);
     ~FieldScene() override;
 
-    // int pixelSize() const;
-
+    ToolConfiguration* m_config;
     void setTool(ToolForFieldInteractive *tool);
-    int m_fieldSizeX;
-    int m_fieldSizeY;
-    int m_pixelSize;
 public slots:
     void OnPixelSizeChanged(int newSize);
 
@@ -40,8 +36,7 @@ private:
     void paintSelectedArea(int, int, QGraphicsSceneMouseEvent*);
 
     ToolForFieldInteractive *m_tool;
-    ToolForFieldInteractive* tool;
-    ToolConfiguration* m_config;
+
 
     QRectF* selectedRect;
     QPointF* lastMouseCoord;

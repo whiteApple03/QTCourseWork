@@ -1,10 +1,10 @@
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
 #include <QPainter>
 #include <QColor>
 #include <QGraphicsSceneMouseEvent>
 
-
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
+#include "toolconfiguration.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -13,10 +13,14 @@ MainWindow::MainWindow(QWidget *parent)
     , currentColor(Qt::black)
 {
     ui->setupUi(this);
+    config = new ToolConfiguration();
     FieldView* graphicsView = new FieldView(this);
     ui->FieldLayout->addWidget(graphicsView);
-    fieldController = new FieldController(graphicsView, 32, 32, this);
-    connect(graphicsView, &FieldView::pixelSizeChanged, fieldController->getScene(), &FieldScene::OnPixelSizeChanged);
+    // fieldController = new FieldController(graphicsView, config, this);
+    scene = new FieldScene(config, graphicsView);
+    graphicsView->setScene(scene);
+    graphicsView->setMouseTracking(true);
+    connect(graphicsView, &FieldView::pixelSizeChanged, scene, &FieldScene::OnPixelSizeChanged);
 }
 
 

@@ -6,10 +6,10 @@
 #include <QGraphicsView>
 #include <QGraphicsRectItem>
 #include <QColorDialog>
-// #include "pixelartscene.h"
 #include "fieldcontroller.h"
 #include "fieldview.h"
 #include "fieldscene.h"
+#include "toolconfiguration.h"
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
@@ -35,8 +35,11 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    FieldController* fieldController;
-    // PixelArtScene* scene;
+    // FieldController* fieldController;
+
+    FieldScene* scene;
     int pixelSize = 10;
+    ToolConfiguration* config;
+
 };
 #endif // MAINWINDOW_H
