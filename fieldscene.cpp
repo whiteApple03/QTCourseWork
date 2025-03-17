@@ -4,6 +4,7 @@
 
 #include "fieldscene.h"
 #include "pencil.h"
+#include "fieldview.h"
 
 
 FieldScene::FieldScene(ToolConfiguration* config, QObject *parent)
@@ -23,8 +24,7 @@ void FieldScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
     int x = (int)(event->scenePos().x() / m_config->pixelSize) * m_config->pixelSize;
     int y = (int)(event->scenePos().y() / m_config->pixelSize) * m_config->pixelSize;
     if (event->buttons() & Qt::LeftButton) {
-        qDebug() << event->scenePos().x();
-        drawPixel(event->scenePos());
+        drawPixel();
     }
     paintSelectedArea(x, y, event);
 
@@ -94,21 +94,16 @@ void FieldScene::addSelectedArea(int topLeftX, int topLeftY, int selectedAreaWid
 }
 
 void FieldScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    drawPixel(event->scenePos());
+    if (event->buttons() & Qt::LeftButton) {
+        drawPixel();
+    }
 }
 
-void FieldScene::drawPixel(const QPointF &scenePos) {
+void FieldScene::drawPixel() {
     if (selectionArea != nullptr) {
         QList<QGraphicsItem *> items = this->items(selectionArea->rect(), Qt::IntersectsItemShape, Qt::AscendingOrder,  QTransform());
-        for(auto item : items) {
-
-            if (PixelItem* rectItem = dynamic_cast<PixelItem*>(item)) {
-                rectItem->setColor(m_config->currentColor);
-            }
-
-        }
+        m_tool->draw(items, m_config);
     }
-    // }
 }
 void FieldScene::OnPixelSizeChanged(int newSize) {
     setSceneRect(0, 0, m_config->fieldSizeX * newSize, m_config->fieldSizeY * newSize);
@@ -130,7 +125,7 @@ void FieldScene::setupScene() {
         for (int x = 0; x < m_config->fieldSizeX; ++x) {
             PixelItem *pixel = new PixelItem(x * m_config->pixelSize, y * m_config->pixelSize, m_config->pixelSize, m_config->pixelSize);
             if (y % 2 == 0 && x % 2 == 0) {
-                 pixel->setColor(Qt::gray, 128);
+                pixel->setColor(Qt::gray, 128);
 
             } else if (y % 2 != 0 && x % 2 != 0) {
                 pixel->setColor(Qt::gray, 128);
@@ -138,6 +133,33 @@ void FieldScene::setupScene() {
             addItem(pixel);
         }
     }
+}
+
+void FieldScene::setupScene(QImage& image) {
+
+    clear();
+    QPixmap pixmap = QPixmap::fromImage(image);
+    m_config->fieldSizeX = image.width();
+    m_config->fieldSizeY = image.height();
+    setSceneRect(0, 0, m_config->fieldSizeX * m_config->pixelSize, m_config->fieldSizeY * m_config->pixelSize);
+    // Итерируемся по всем пикселям изображения
+    for (int y = 0; y < image.height(); y++) {
+        for (int x = 0; x < image.width(); x++) {
+            QColor pixelColor = image.pixelColor(x, y);
+
+            PixelItem *pixel = new PixelItem(x * m_config->pixelSize, y * m_config->pixelSize, m_config->pixelSize, m_config->pixelSize);
+            pixel->setColor(pixelColor);
+            addItem(pixel);
+        }
+    }
+}
+
+void FieldScene::setTool(ToolForFieldInteractive* tool) {
+    if (m_tool != nullptr) {
+        delete m_tool;
+        m_tool = nullptr;
+    }
+    m_tool = tool;
 }
 
 FieldScene::~FieldScene() {

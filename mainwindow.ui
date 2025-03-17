@@ -27,16 +27,16 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_3">
+         <widget class="QPushButton" name="pencil">
           <property name="text">
-           <string>PushButton</string>
+           <string>pencil</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="eraser">
           <property name="text">
-           <string>PushButton</string>
+           <string>eraser</string>
           </property>
          </widget>
         </item>
@@ -47,23 +47,51 @@
     <item row="0" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QPushButton" name="pushButton_4">
+       <widget class="QPushButton" name="FieldSizeConfig">
         <property name="text">
-         <string>PushButton</string>
+         <string>Change field size</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_6">
-        <property name="text">
-         <string>PushButton</string>
+       <widget class="QSlider" name="selectedAreaSize">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>24</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_5">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Policy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>10</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="selectedAreaSizeLabel">
         <property name="text">
-         <string>PushButton</string>
+         <string>1</string>
         </property>
        </widget>
       </item>
@@ -85,6 +113,8 @@
      <string>File</string>
     </property>
     <addaction name="actionsave_image"/>
+    <addaction name="actionimport_to_database"/>
+    <addaction name="actionexport_from_database"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
@@ -95,6 +125,16 @@
    </property>
    <property name="text">
     <string>save image</string>
+   </property>
+  </action>
+  <action name="actionimport_to_database">
+   <property name="text">
+    <string>import to database</string>
+   </property>
+  </action>
+  <action name="actionexport_from_database">
+   <property name="text">
+    <string>export from database</string>
    </property>
   </action>
  </widget>

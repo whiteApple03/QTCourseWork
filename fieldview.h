@@ -12,17 +12,6 @@ class FieldView : public QGraphicsView {
 public:
     FieldView(QWidget *parent = nullptr) : QGraphicsView(parent) {}
 
-signals:
-    void pixelSizeChanged(int newSize);
-
-protected:
-    void resizeEvent(QResizeEvent *event) override {
-        QGraphicsView::resizeEvent(event);
-        recalculatePixelSize();
-    }
-
-private:
-
     void recalculatePixelSize() {
         FieldScene* m_scene = dynamic_cast<FieldScene*>(this->scene());
         if (!m_scene) return;
@@ -36,6 +25,18 @@ private:
             emit pixelSizeChanged(newPixelSize);
         }
     }
+
+signals:
+    void pixelSizeChanged(int newSize);
+
+protected:
+    void resizeEvent(QResizeEvent *event) override {
+        QGraphicsView::resizeEvent(event);
+        recalculatePixelSize();
+    }
+
+
+
 };
 #endif // FIELDVIEW_H
 

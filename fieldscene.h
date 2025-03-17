@@ -18,7 +18,10 @@ public:
     ~FieldScene() override;
 
     ToolConfiguration* m_config;
-    void setTool(ToolForFieldInteractive *tool);
+    void setTool(ToolForFieldInteractive* tool);
+    void setupScene();
+    void setupScene(QImage& pixmap);
+
 public slots:
     void OnPixelSizeChanged(int newSize);
 
@@ -27,8 +30,7 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
 
 private:
-    void drawPixel(const QPointF &scenePos);
-    void setupScene();
+    void drawPixel();
     bool checkBorders(const QPointF& point);
     int getOffsetXAndValidateTopLeftX(int &offsetX);
     int getOffsetYAndValidateTopLeftY(int &offsetY);
